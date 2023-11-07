@@ -7,40 +7,21 @@ class ProductManager {
     addProduct({ title, description, price, thumbnail, code, stock }) {
         //Comprobamos que ningún campo esté vacío.
         if (!title || !description || !price || !thumbnail || !code || !stock) {
-            console.error("Debe completar todos los campos.")
-            return
+            return console.error("Debe completar todos los campos.")
         }
         //Comprobamos que el código (code) no esté repetido.
         if (this.products.some(product => product.code === code)) {
-            console.error("El código ya existe.")
-            return
+            return console.error("El código ya existe.")
         }
         //Creamos el objeto incluyendo un id autoincrementable y lo "pusheamos" al array de productos.
-        const newProduct = {
-            id: this.counterId++,
-            title,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock
-        }
+        const newProduct = { id: this.counterId++, title, description, price, thumbnail, code, stock }
         this.products.push(newProduct)
         console.log(`El Producto "${newProduct.title}" fue agregado exitosamente.`)
     }
     //Método para obtener el array de productos.
-    getProducts() {
-        return this.products
-    }
+    getProducts = () => this.products
     //Método para buscar un producto por id.
-    getProductById(id) {
-        const product = this.products.find(product => product.id === id)
-        if (product) {
-            return product
-        } else {
-            console.log("Producto no encontrado.")
-        }
-    }
+    getProductById = id => this.products.find(product => product.id === id) || console.log("Producto no encontrado.")
 }
 
 // TESTING
