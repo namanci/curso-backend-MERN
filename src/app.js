@@ -3,7 +3,7 @@ const ProductManager = require('./ProductManager')
 
 const app = express()
 app.use(express.urlencoded({ extended: true }))
-const port = 8000
+const port = 8080
 const productManager = new ProductManager('./products.json')
 
 // Endpoint para obtener todos los productos
