@@ -1,23 +1,9 @@
-{{!-- <div>
-    <h1>Bienvenido {{name}}.</h1>
-</div>
-<div>
-    <h2>Listado de Productos</h2>
-    <ul>
-        {{#each prodList}}
-        <li>
-            {{this.title}}
-        </li>
-        {{/each}}
-    </ul>
-</div> --}}
-
 <div>
     <h1>Bienvenido {{name}}</h1>
 </div>
 <div>
     <h2>Listado de Productos</h2>
-    <table class="uk-table uk-table-striped">
+    <table class="uk-table uk-table-striped uk-table-hover">
         <thead>
             <tr>
                 <th>Código</th>
@@ -33,7 +19,7 @@
                     <td>{{this.code}}</td>
                     <td>{{this.title}}</td>
                     <td>{{this.description}}</td>
-                    <td>{{this.price}}</td>
+                    <td>${{this.price}}</td>
                     <td>{{this.stock}}</td>
                 </tr>
             {{/each}}

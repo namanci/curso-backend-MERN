@@ -64,6 +64,7 @@ class ProductManager {
         const productsFiltered = products.filter(product => product.id !== id) // Mediante el método filter creamos un array con todos los productos menos aquel con el id ingresado.
         await fs.promises.writeFile(this.path, JSON.stringify(productsFiltered))
         console.log('Producto eliminado.')
+        return productsFiltered
     }
 }
 
