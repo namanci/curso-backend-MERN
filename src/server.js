@@ -20,7 +20,7 @@ const port = 8080
 const productManager = new ProductManager('./src/products.json')
 
 const connectDb = async () => {
-    await connect('mongodb+srv://tiendanext:jkbSDSUFtCjR7Rk8@tnext.d9di8fi.mongodb.net/nextDB?retryWrites=true&w=majority')
+    await connect('')
     console.log('Base de datos conectada.')
 }
 connectDb()
