@@ -1,10 +1,12 @@
 const express = require('express')
 const handlebars = require('express-handlebars')
 const { Server } = require('socket.io')
+const { connect } = require('mongoose')
 const ProductManager = require('./managers/ProductManager')
 const productsRouter = require('./routes/products.router.js')
 const cartsRouter = require('./routes/carts.router.js')
 const viewsRouter = require('./routes/views.router.js')
+//const { connect } = require('http2')
 
 const server = express()
 const httpServer = require('http').Server(server)
@@ -16,6 +18,12 @@ server.use(express.static(__dirname + '/public'))
 
 const port = 8080
 const productManager = new ProductManager('./src/products.json')
+
+const connectDb = async () => {
+    await connect('mongodb+srv://tiendanext:jkbSDSUFtCjR7Rk8@tnext.d9di8fi.mongodb.net/nextDB?retryWrites=true&w=majority')
+    console.log('Base de datos conectada.')
+}
+connectDb()
 
 server.engine('hbs', handlebars.engine({ extname: '.hbs' }))
 server.set('view engine', 'hbs')
