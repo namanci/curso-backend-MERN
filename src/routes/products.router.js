@@ -1,85 +1,77 @@
 const { Router } = require('express')
-const ProductManager = require('../managers/ProductManager.js')
+const ProductManager = require('../daos/ProductDaoAtlas.js')
 
 const productsRouter = Router()
-const productManager = new ProductManager('./src/products.json')
+const productManager = new ProductManager()
 
 // Ruta para obtener todos los productos.
 productsRouter.get('/', async (req, res) => {
     try {
-        const limit = req.query.limit
-        const products = await productManager.getProducts()
-
-        if (limit) {
-            const limitedProducts = products.slice(0, parseInt(limit, 10))
-            res.status(200).json({ status: 'éxito', data: limitedProducts })
-        } else {
-            res.status(200).json({ status: 'éxito', data: products })
+        const { page=1, limit=3 } = req.query
+        const { docs, 
+            hasPrevPage,
+            prevPage,
+            hasNextPage,
+            nextPage
+        } = await productManager.getProducts({ page, limit })
+        if (!docs) {
+            return res.status(400).send('No encontrado')
         }
+        res.status(200).render('product', {
+            products: docs, 
+            hasPrevPage,
+            prevPage,
+            hasNextPage,
+            nextPage, 
+        })
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ status: 'error', error: 'Error interno del servidor.' })
+        console.log(error)
     }
 })
 
 // Ruta para obtener un producto por ID.
 productsRouter.get('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid, 10)
-        const product = await productManager.getProductById(productId)
-
-        if (product) {
-            res.status(200).json({ status: 'éxito', data: product })
-        } else {
-            res.status(404).json({ status: 'error', error: 'Producto no encontrado.' })
-        }
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({ status: 'error', error: 'Error interno del servidor.' })
-    }
+    const { pid } = req.params
+    let productById = await productManager.getProductById(pid)
+    res.send(productById)
 })
 
 // Ruta para agregar un producto.
 productsRouter.post('/', async (req, res) => {
     try {
-        const { title, description, code, price, stock, category, thumbnails } = req.body
-
-        await productManager.addProduct({ title, description, code, price, stock, category, thumbnails })
-
-        res.status(200).json({ status: 'éxito', message: 'Producto agregado correctamente.' })
+        let { title, thumbnail, price, code, stock } = req.body
+        if (!title || !thumbnail || !price || !code || !stock) {
+            return res.status(400).send({ message: 'Debe completar todos los campos obligatorios.' })
+        }
+        let addedProduct = await productManager.addProduct({ title, description, thumbnail, price, code, stock })
+        res.status(201).send({ 
+            addedProduct,
+            message: 'Producto agregado correctamente.' 
+        })
     } catch (error) {
-        console.error(error)
-        res.status(400).json({ status: 'error', error: 'Debe completar todos los campos obligatorios.' })
+        console.log(error)
     }
 })
 
 // Ruta para actualizar un producto por ID.
-productsRouter.put('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid, 10)
-        const productUpdate = req.body
-
-        await productManager.updateProduct(productId, productUpdate)
-
-        res.status(200).json({ status: 'éxito', message: 'Producto actualizado correctamente.' })
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({ status: 'error', error: 'Error interno del servidor.' })
+productsRouter.put('/:pid', async (req, res) =>{
+    const { pid } = req.params
+    let productUpdate = req.body
+    if (!productUpdate.title || !productUpdate.thumbnail || !productUpdate.price || !productUpdate.code || !productUpdate.stock) {
+        return res.status(400).send({ message: 'Debe completar todos los campos obligatorios.' })
     }
+    let result = await productManager.updateProduct(pid, productUpdate)
+    res.status(201).send({ 
+        products: result,
+        message: 'Producto actualizado correctamente.'
+    })
 })
 
 // Ruta para eliminar un producto por ID.
-productsRouter.delete('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid, 10)
-
-        await productManager.deleteProduct(productId)
-
-        res.status(200).json({ status: 'éxito', message: 'Producto eliminado correctamente.' })
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({ status: 'error', error: 'Error interno del servidor.' })
-    }
+productsRouter.delete('/:pid', async (req, res)=> {
+    const { pid } = req.params
+    let result = await productManager.deleteProduct(pid)
+    res.status(200).send({ message:'Producto eliminado correctamente.', result })
 })
 
 module.exports = productsRouter

@@ -6,7 +6,6 @@ const ProductManager = require('./managers/ProductManager')
 const productsRouter = require('./routes/products.router.js')
 const cartsRouter = require('./routes/carts.router.js')
 const viewsRouter = require('./routes/views.router.js')
-//const { connect } = require('http2')
 
 const server = express()
 const httpServer = require('http').Server(server)
@@ -20,7 +19,7 @@ const port = 8080
 const productManager = new ProductManager('./src/products.json')
 
 const connectDb = async () => {
-    await connect('mongodb+srv://tiendanext:jkbSDSUFtCjR7Rk8@tnext.d9di8fi.mongodb.net/nextDB?retryWrites=true&w=majority')
+    await connect('mongodb+srv://tiendanext:2pUaF7upS4i6Q@tnext.d9di8fi.mongodb.net/nextDB?retryWrites=true&w=majority')
     console.log('Base de datos conectada.')
 }
 connectDb()
